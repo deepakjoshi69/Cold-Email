@@ -1,0 +1,27 @@
+{
+  "version": "7",
+  "dialect": "postgresql",
+  "entries": [
+    {
+      "idx": 0,
+      "version": "7",
+      "when": 1743220472837,
+      "tag": "0000_optimal_zeigeist",
+      "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1743648434500,
+      "tag": "0001_elite_james_howlett",
+      "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1743648772038,
+      "tag": "0002_conscious_la_nuit",
+      "breakpoints": true
+    }
+  ]
+}
