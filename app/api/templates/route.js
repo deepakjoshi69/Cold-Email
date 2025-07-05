@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server"
-import { getTemplates, createTemplate } from "../../../lib/db"
+import { getTemplates, createTemplate } from "@/lib/db"
 
 export async function GET(request) {
   try {
