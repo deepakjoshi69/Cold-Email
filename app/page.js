@@ -55,17 +55,7 @@ export default function Home() {
               Get Started
               <ChevronRight className="ml-2 h-5 w-5" />
             </Button>
-            <Link href="/#">
-              <Button
-                variant="outline"
-                className="w-full sm:w-auto border border-gray-300 hover:bg-gray-700 text-black bg-blue-500 px-8 py-6 rounded-lg text-lg"
-                onClick={() => {
-                  toast.error("Not Available");
-                }}
-              >
-                See Demo
-              </Button>
-            </Link>
+            
           </div>
 
           <div className="pt-8 flex items-center space-x-8">
