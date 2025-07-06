@@ -58,20 +58,6 @@ export default function Home() {
             
           </div>
 
-          <div className="pt-8 flex items-center space-x-8">
-            <div className="flex -space-x-2 overflow-hidden">
-              {[1, 2, 3, 4].map((i) => (
-                <div
-                  key={i}
-                  className="inline-block h-10 w-10 rounded-full ring-2 ring-white bg-gray-600"
-                />
-              ))}
-            </div>
-            <div className="text-sm text-gray-600">
-              <span className="text-gray-900 font-bold">4,000+</span>{" "}
-              professionals use our platform daily
-            </div>
-          </div>
         </div>
 
         <div className="md:w-1/2 relative">
