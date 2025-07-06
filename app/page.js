@@ -55,7 +55,6 @@ export default function Home() {
               Get Started
               <ChevronRight className="ml-2 h-5 w-5" />
             </Button>
-            
           </div>
 
         </div>
