@@ -21,7 +21,7 @@ export default function SavedTemplatesPage() {
     if (!dateString) return "Unknown";
     const date = new Date(dateString);
     const day = String(date.getDate()).padStart(2, "0");
-    const month = String(date.getMonth() + 1).padStart(2, "0"); // months are 0-indexed
+    const month = String(date.getMonth() + 1).padStart(2, "0");
     const year = String(date.getFullYear()).slice(2);
     return `${day}-${month}-${year}`;
   }
@@ -91,15 +91,16 @@ export default function SavedTemplatesPage() {
         <p className="text-gray-600">
           Access and manage your collection of templates
         </p>
-        <div className="relative">
+        <div className="flex justify-start lg:justify-end">
           <Button
             onClick={goTemplate}
-            className="absolute right-11 bottom-2 bg-gradient-to-r from-purple-500 to-pink-500 text-white"
+            className="bg-gradient-to-r from-purple-500 to-pink-500 text-white"
           >
             Go Back
           </Button>
         </div>
       </div>
+
       {templates.length > 0 ? (
         <motion.div
           className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6"

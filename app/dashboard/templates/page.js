@@ -1,13 +1,16 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
+import { useUser } from "@clerk/nextjs";
+import { Loader2, Wand2, Save } from "lucide-react";
+import { useToast } from "../../../hooks/use-toast";
+
 import { Button } from "../../../components/ui/button";
 import { Card } from "../../../components/ui/card";
 import { Input } from "../../../components/ui/input";
 import { Label } from "../../../components/ui/label";
 import { Textarea } from "../../../components/ui/textarea";
-import { useUser } from "@clerk/nextjs";
 import {
   Select,
   SelectContent,
@@ -15,15 +18,16 @@ import {
   SelectTrigger,
   SelectValue,
 } from "../../../components/ui/select";
-import { Loader2, Wand2, Save } from "lucide-react";
-import { useToast } from "../../../hooks/use-toast";
 
 export default function TemplatesPage() {
   const router = useRouter();
   const { toast } = useToast();
+  const { user } = useUser();
+
   const [loading, setLoading] = useState(false);
   const [generating, setGenerating] = useState(false);
-  const { user } = useUser();
+  const [isDesktop, setIsDesktop] = useState(true);
+
   const [formData, setFormData] = useState({
     name: "",
     category: "marketing",
@@ -31,6 +35,15 @@ export default function TemplatesPage() {
     content: "",
     instructions: "",
   });
+
+  useEffect(() => {
+    const checkIsDesktop = () => {
+      setIsDesktop(window.innerWidth >= 1024);
+    };
+    checkIsDesktop();
+    window.addEventListener("resize", checkIsDesktop);
+    return () => window.removeEventListener("resize", checkIsDesktop);
+  }, []);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -55,9 +68,7 @@ export default function TemplatesPage() {
     try {
       const response = await fetch("/api/generate-template", {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           category: formData.category,
           instructions: formData.instructions,
@@ -66,7 +77,7 @@ export default function TemplatesPage() {
 
       if (!response.ok) {
         const errorText = await response.text();
-        console.log("API error response:", errorText);
+        console.error("API error response:", errorText);
         throw new Error(`Failed to generate template: ${response.status}`);
       }
 
@@ -83,7 +94,7 @@ export default function TemplatesPage() {
         description: "Your template has been generated successfully",
       });
     } catch (error) {
-      console.log("Error generating template:", error.message);
+      console.error("Error generating template:", error.message);
       toast({
         title: "Generation failed",
         description: "Failed to generate template. Please check your API key or try again.",
@@ -96,7 +107,7 @@ export default function TemplatesPage() {
 
   const saveTemplate = async () => {
     const userId = user?.id;
-  
+
     if (!formData.name || !formData.content || !userId) {
       toast({
         title: "Missing Fields",
@@ -105,9 +116,8 @@ export default function TemplatesPage() {
       });
       return;
     }
-  
+
     setLoading(true);
-  
     try {
       const response = await fetch("/api/templates", {
         method: "POST",
@@ -120,19 +130,19 @@ export default function TemplatesPage() {
           content: formData.content,
         }),
       });
-  
+
       const data = await response.json();
-  
       console.log("Server Response:", data);
+
       if (!response.ok) {
         throw new Error(data.error || "Failed to save template");
       }
-  
+
       toast({
         title: "Template Saved",
         description: "Your template has been saved successfully!",
       });
-  
+
       router.refresh();
     } catch (error) {
       console.error("Save Error:", error.message);
@@ -146,13 +156,31 @@ export default function TemplatesPage() {
     }
   };
 
+  if (!isDesktop) {
+    return (
+      <div className="flex flex-col items-center justify-center min-h-screen bg-gray-50 text-center p-6">
+        <div className="bg-white shadow-lg rounded-xl p-8 max-w-md">
+          <h2 className="text-xl font-semibold text-gray-800 mb-3">⚠️ Desktop Only</h2>
+          <p className="text-gray-600 mb-6">
+            Please open this page on a desktop to create or edit templates properly.
+          </p>
+          <Button
+            onClick={() => router.back()}
+            className="bg-gradient-to-r from-purple-500 to-pink-500 text-white"
+          >
+            Go Back
+          </Button>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="space-y-6 pt-6 px-6">
-      <div className=" relative flex justify-end top-20">
+      <div className="relative flex justify-end top-20">
         <Button
           onClick={() => router.back()}
-          variant="destructive"
-          className="mb-4"
+          className="mb-4 bg-gradient-to-r from-purple-500 to-pink-500 text-white"
         >
           Go Back
         </Button>
@@ -171,8 +199,8 @@ export default function TemplatesPage() {
               <Select
                 value={formData.category}
                 onValueChange={(value) => handleSelectChange("category", value)}
-              >
-                <SelectTrigger>
+               >
+                <SelectTrigger  className="bg-white text-gray-700 hover:border-green-400">
                   <SelectValue placeholder="Select category" />
                 </SelectTrigger>
                 <SelectContent>

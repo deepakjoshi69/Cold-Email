@@ -131,6 +131,26 @@ export default function TemplateDetailPage() {
       </div>
     );
   }
+  
+   if (isMobile) {
+  return (
+    <div className="flex flex-col items-center justify-center min-h-screen bg-gray-50 text-center p-6">
+      <div className="bg-white shadow-lg rounded-xl p-8 max-w-md">
+        <h2 className="text-xl font-semibold text-gray-800 mb-3">⚠️ Desktop Only</h2>
+        <p className="text-gray-600 mb-6">
+          Please open this page on a desktop to view and edit the template properly.
+        </p>
+        <button
+          onClick={() => router.back()}
+          className="mt-2 px-5 py-2 bg-gradient-to-r from-purple-500 to-pink-500 text-white rounded-md font-medium transition-colors"
+        >
+          Go Back
+        </button>
+      </div>
+    </div>
+  );
+}
+
 
   return (
     <div className="flex flex-col min-h-screen bg-gray-50 overflow-hidden">

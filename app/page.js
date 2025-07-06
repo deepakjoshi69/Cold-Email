@@ -131,7 +131,7 @@ export default function Home() {
             </div>
 
             <div className="mt-6">
-              <Button className="w-full bg-purple-600 hover:bg-purple-700 text-white shadow-md">
+              <Button className="w-full bg-purple-600 hover:bg-purple-700 text-white shadow-md cursor-not-allowed">
                 Generate Email
               </Button>
             </div>
@@ -222,15 +222,14 @@ export default function Home() {
                 effectively.
               </p>
             </div>
-            <Link href="/dashboard">
               <Button
                 size="lg"
                 className="bg-purple-600 hover:bg-purple-700 text-white font-medium px-8 py-6 rounded-lg text-lg shadow-md transition-all"
+              onClick={handleClick}
               >
                 Start Creating Emails
                 <ChevronRight className="ml-2 h-5 w-5" />
               </Button>
-            </Link>
           </div>
         </div>
       </section>

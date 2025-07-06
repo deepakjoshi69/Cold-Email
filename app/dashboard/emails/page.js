@@ -25,6 +25,7 @@ export default function EmailGenerator() {
   const [isSaving, setIsSaving] = useState(false);
   const [saved, setSaved] = useState(false);
   const [generating, setGenerating] = useState(false);
+  const [isMobile, setIsMobile] = useState(false);
 
   const [formData, setFormData] = useState({
     recipient: "",
@@ -34,6 +35,16 @@ export default function EmailGenerator() {
     content: "",
     instructions: "",
   });
+
+  // Detect if screen is mobile/tablet
+  useEffect(() => {
+    const checkScreen = () => {
+      setIsMobile(window.innerWidth < 1024); // lg breakpoint
+    };
+    checkScreen();
+    window.addEventListener("resize", checkScreen);
+    return () => window.removeEventListener("resize", checkScreen);
+  }, []);
 
   useEffect(() => {
     const draft = localStorage.getItem("email-draft");
@@ -68,8 +79,7 @@ export default function EmailGenerator() {
   const generateEmail = async () => {
     if (!formData.instructions) {
       toast.error("Instructions required", {
-        description:
-          "Please provide instructions for the AI to generate your email",
+        description: "Please provide instructions for the AI to generate your email",
       });
       return;
     }
@@ -89,13 +99,11 @@ export default function EmailGenerator() {
       if (!response.ok) throw new Error("Failed to generate email");
 
       const data = await response.json();
-
       setFormData((prev) => ({
         ...prev,
         subject: data.subject || prev.subject,
         content: data.content || prev.content,
       }));
-
       toast.success("Email generated", {
         description: "Your email has been generated successfully",
       });
@@ -109,9 +117,10 @@ export default function EmailGenerator() {
     }
   };
 
-  const goTemplate = async () => {
+  const goTemplate = () => {
     router.push("/dashboard/savedTemplate");
   };
+
   const handleClick = async () => {
     if (saved) {
       toast.info("Template Already Saved");
@@ -119,9 +128,7 @@ export default function EmailGenerator() {
     }
 
     setIsSaving(true);
-    toast.info("Please wait", {
-      description: "Saving your template...",
-    });
+    toast.info("Please wait", { description: "Saving your template..." });
 
     try {
       const res = await fetch("/api/templates", {
@@ -147,7 +154,7 @@ export default function EmailGenerator() {
     }
   };
 
-  const CreateAnother = async () => {
+  const CreateAnother = () => {
     setFormData({
       recipient: "",
       subject: "",
@@ -160,35 +167,48 @@ export default function EmailGenerator() {
     localStorage.removeItem("email-draft");
   };
 
+  // Mobile view fallback
+  if (isMobile) {
+    return (
+      <div className="flex flex-col items-center justify-center min-h-screen bg-gray-50 text-center p-6">
+        <div className="bg-white shadow-lg rounded-xl p-8 max-w-md">
+          <h2 className="text-xl font-semibold text-gray-800 mb-3">⚠️ Desktop Only</h2>
+          <p className="text-gray-600 mb-6">
+            Please open this page on a desktop to use the AI Email Generator properly.
+          </p>
+          <button
+            onClick={() => router.back()}
+            className="px-5 py-2 bg-gradient-to-r from-purple-500 to-pink-500 text-white rounded-md font-medium transition-colors"
+          >
+            Go Back
+          </button>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="max-w-7xl mx-2 px-4 py-8 mt-16">
-      <div className="mb-8">
+      <div className="mb-8 relative">
         <div className="flex items-center mb-2">
           <Sparkles className="h-6 w-6 text-purple-500 mr-2" />
-          <h1 className="text-3xl font-bold tracking-tight text-gray-800">
-            AI Email Generator
-          </h1>
+          <h1 className="text-3xl font-bold tracking-tight text-gray-800">AI Email Generator</h1>
         </div>
-        <p className="text-gray-500">
-          Create perfectly crafted emails in seconds with AI assistance
-        </p>
-      <div className="relative">
-      <Button
-      onClick={goTemplate}
-       className="absolute right-[-230px] bottom-2 bg-gradient-to-r from-purple-500 to-pink-500 text-white"
-       >
-       Go To Templates
-                </Button>
-      </div>
+        <p className="text-gray-500">Create perfectly crafted emails in seconds with AI assistance</p>
+        <Button
+          onClick={goTemplate}
+          className="absolute right-[-230px] bottom-2 bg-gradient-to-r from-purple-500 to-pink-500 text-white"
+        >
+          Go To Templates
+        </Button>
       </div>
 
       <div className="flex w-screen gap-6">
-        <Card className="w-[60vw] bg-white border border-gray-400 rounded-xl p-6 shadow-sm ">
+        {/* Left Card */}
+        <Card className="w-[60vw] bg-white border border-gray-400 rounded-xl p-6 shadow-sm">
           <div className="space-y-5">
             <div className="space-y-2">
-              <Label htmlFor="recipient" className="text-gray-950 font-bold">
-                Recipient
-              </Label>
+              <Label htmlFor="recipient" className="text-gray-950 font-bold">Recipient</Label>
               <Input
                 id="recipient"
                 name="recipient"
@@ -198,11 +218,8 @@ export default function EmailGenerator() {
                 className="bg-white text-gray-700 hover:border-green-400"
               />
             </div>
-
             <div className="space-y-2">
-              <Label htmlFor="subject" className="text-gray-950 font-bold">
-                Subject
-              </Label>
+              <Label htmlFor="subject" className="text-gray-950 font-bold">Subject</Label>
               <Input
                 id="subject"
                 name="subject"
@@ -212,11 +229,8 @@ export default function EmailGenerator() {
                 className="bg-white text-gray-700 hover:border-green-400"
               />
             </div>
-
             <div className="space-y-2">
-              <Label htmlFor="content" className="text-gray-950 font-bold">
-                Content
-              </Label>
+              <Label htmlFor="content" className="text-gray-950 font-bold">Content</Label>
               <Textarea
                 id="content"
                 name="content"
@@ -229,23 +243,20 @@ export default function EmailGenerator() {
             </div>
           </div>
         </Card>
+
+        {/* Right Card */}
         <Card className="w-[30vw] bg-white border border-gray-200 rounded-xl p-6 shadow-sm">
           <div className="space-y-5">
-         
             <div className="space-y-2">
-              <Label htmlFor="emailType" className="text-gray-700 font-medium">
-                Email Type
-              </Label>
+              <Label htmlFor="emailType" className="text-gray-700 font-medium">Email Type</Label>
               <Select
                 value={formData.emailType}
-                onValueChange={(value) =>
-                  handleSelectChange("emailType", value)
-                }
+                onValueChange={(value) => handleSelectChange("emailType", value)}
               >
                 <SelectTrigger className="bg-white text-gray-700 hover:border-green-400">
                   <SelectValue placeholder="Select email type" />
                 </SelectTrigger>
-                <SelectContent className="bg-white text-gray-700 hover:border-green-400">
+                <SelectContent>
                   <SelectItem value="marketing">Marketing</SelectItem>
                   <SelectItem value="cold-outreach">Cold Outreach</SelectItem>
                   <SelectItem value="follow-up">Follow-up</SelectItem>
@@ -254,11 +265,8 @@ export default function EmailGenerator() {
                 </SelectContent>
               </Select>
             </div>
-
             <div className="space-y-2">
-              <Label htmlFor="tone" className="text-gray-700 font-bold">
-                Tone
-              </Label>
+              <Label htmlFor="tone" className="text-gray-700 font-bold">Tone</Label>
               <Select
                 value={formData.tone}
                 onValueChange={(value) => handleSelectChange("tone", value)}
@@ -266,7 +274,7 @@ export default function EmailGenerator() {
                 <SelectTrigger className="bg-white text-gray-700 hover:border-green-400">
                   <SelectValue placeholder="Select tone" />
                 </SelectTrigger>
-                <SelectContent className="bg-white text-gray-700 hover:border-green-400">
+                <SelectContent>
                   <SelectItem value="professional">Professional</SelectItem>
                   <SelectItem value="friendly">Friendly</SelectItem>
                   <SelectItem value="casual">Casual</SelectItem>
@@ -275,11 +283,8 @@ export default function EmailGenerator() {
                 </SelectContent>
               </Select>
             </div>
-
             <div className="space-y-2">
-              <Label htmlFor="instructions" className="text-gray-900 font-bold">
-                Instructions
-              </Label>
+              <Label htmlFor="instructions" className="text-gray-900 font-bold">Instructions</Label>
               <Textarea
                 id="instructions"
                 name="instructions"
@@ -290,7 +295,6 @@ export default function EmailGenerator() {
                 className="bg-white text-gray-700 hover:border-green-400"
               />
             </div>
-
             <Button
               onClick={generateEmail}
               disabled={generating || !formData.instructions}
@@ -298,8 +302,7 @@ export default function EmailGenerator() {
             >
               {generating ? (
                 <>
-                  <Loader2 className="mr-2 h-4 w-4 animate-spin" /> Generating
-                  From Ai
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" /> Generating...
                 </>
               ) : (
                 <>
@@ -310,37 +313,23 @@ export default function EmailGenerator() {
 
             {formData.subject && formData.content && (
               <div className="flex justify-between">
-                <Button
-                  onClick={handleGoBack}
-                  className="bg-red-500 hover:bg-red-600 text-white p-5"
-                >
+                <Button onClick={handleGoBack} className="bg-red-500 hover:bg-red-600 text-white p-5">
                   Go Back
                 </Button>
                 <Button
                   onClick={handleClick}
                   disabled={isSaving}
-                  className={`${
-                    isSaving || saved
-                      ? "bg-green-900 hover:bg-green-900"
-                      : "bg-green-500 hover:bg-green-800"
-                  } text-white transition`}
+                  className={`${isSaving || saved
+                    ? "bg-green-900 hover:bg-green-900"
+                    : "bg-green-500 hover:bg-green-800"} text-white transition`}
                 >
-                  {saved ? (
-                    "Template Saved"
-                  ) : isSaving ? (
+                  {saved ? "Template Saved" : isSaving ? (
                     <>
-                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />{" "}
-                      Saving...
+                      <Loader2 className="mr-2 h-4 w-4 animate-spin" /> Saving...
                     </>
-                  ) : (
-                    "Save Template"
-                  )}
+                  ) : "Save Template"}
                 </Button>
-
-                <Button
-                  onClick={CreateAnother}
-                  className="bg-gradient-to-r from-purple-500 to-pink-500 text-white"
-                >
+                <Button onClick={CreateAnother} className="bg-gradient-to-r from-purple-500 to-pink-500 text-white">
                   Create Another
                 </Button>
               </div>
