@@ -124,15 +124,16 @@ export default function Dashboard() {
               animate={{ y: 0, opacity: 1 }}
               transition={{ delay: 0.7 }}
             >
+              <Link href={"/dashboard/emails"}>
               <Button 
                 size="lg"
                 className="bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white shadow-md transition-all duration-300 transform hover:scale-105"
-                onClick={showSuccessToast}
               >
                 <PlusCircle className="mr-2 h-4 w-4" />
                 Create Email
               </Button>
-              
+              </Link>
+              <Link href={"/dashboard/emails"}>
               <Button
                 size="lg"
                 className="border-purple-200 text-white bg-gradient-to-r from-purple-500 to-pink-500 transition-all duration-300 transform hover:scale-105"
@@ -140,6 +141,7 @@ export default function Dashboard() {
                 <FileText className="mr-2 h-4 w-4" />
                 Create Template
               </Button>
+              </Link>
             </motion.div>
           </div>
         </motion.div>
