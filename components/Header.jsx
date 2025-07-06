@@ -56,20 +56,11 @@ export default function Header() {
           <div className="hidden lg:flex items-center space-x-1">
             {isSignedIn ? (
               <>
+              <NavLink href="/" active={pathname === "/"}>
+                  Home
+                </NavLink>
                 <NavLink href="/dashboard" active={pathname === "/dashboard"}>
                   Dashboard
-                </NavLink>
-                <NavLink
-                  href="#"
-                  onClick={() => toast.error("Profile page is not available")}
-                >
-                  Profile
-                </NavLink>
-                <NavLink
-                  href="#"
-                  onClick={() => toast.error("About page is not available")}
-                >
-                  About
                 </NavLink>
                 <div className="ml-6">
                   <UserButton
